@@ -1,0 +1,39 @@
+# SIEVE re-check schedule
+# E · Expire every verification.
+#
+# A dated line in a document is not a mechanism. A job that reads this file is.
+# scripts/check_rechecks.py reads it and fails when a re-check is due and not done,
+# so it can hold a publish. It never publishes anything itself.
+#
+# One entry per observation or per debt register item with an expiry date.
+#   id          unique, stable
+#   artefact    path or URL of the thing that depends on this check
+#   claim       what was observed, in one line
+#   source      where it was observed, precise enough to re-open
+#   checked_on  date the observation was made (YYYY-MM-DD)
+#   recheck_by  date by which it must be checked again
+#   use_on      optional: the date the artefact goes out; recheck_by must come before it
+#   owner       who answers for the re-check
+#   status      open | confirmed | changed | withdrawn
+#               confirmed means re-checked and still true: update checked_on and recheck_by
+#               changed means it is no longer true: the artefact is held until fixed
+
+rechecks:
+  - id: example-vendor-price
+    artefact: articles/2026-11-03-vendor-pricing.md
+    claim: Vendor X lists its base plan at 20 EUR per month
+    source: https://example.com/pricing (plans table, first row)
+    checked_on: 2026-10-20
+    recheck_by: 2026-11-02
+    use_on: 2026-11-03
+    owner: desk
+    status: open
+
+  - id: example-temp-permission
+    artefact: services/ingest
+    claim: Agent has temporary write access to the staging bucket
+    source: debt register, line 2
+    checked_on: 2026-10-23
+    recheck_by: 2026-10-30
+    owner: platform
+    status: open
